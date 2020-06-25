@@ -1,5 +1,4 @@
 from app.config import Config
-from dotenv import load_dotenv
 from app.extensions import db, migrate
 from flask import Flask, jsonify, make_response
 
@@ -25,7 +24,6 @@ def register_errorhandlers(app):
 
 def create_app(config_class=Config):
     
-    load_dotenv() # Load all env variables for the app
     app = Flask(__name__)
 
     app.secret_key = "lsgab7sfgd"

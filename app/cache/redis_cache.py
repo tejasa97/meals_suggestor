@@ -1,3 +1,4 @@
+from app.config import REDIS_CONF
 import pickle
 import redis
 
@@ -5,7 +6,7 @@ class Redis(object):
     
     def __init__(self):
     
-        self.redis = redis.Redis(host="localhost", port=6379)
+        self.redis = redis.Redis(host=REDIS_CONF['host'], port=REDIS_CONF['port'])
 
     def check_key_exists(self, key):
 

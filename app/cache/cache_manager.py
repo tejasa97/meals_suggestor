@@ -1,5 +1,5 @@
 from app.cache.redis_cache import Redis
-from app.config import MEALS_PER_COMBO, MAX_CACHED_RESULTS
+from app.config import MEALS_PER_COMBO, MAX_RESULTS
 from six.moves import range as xrange
 import random
 
@@ -32,7 +32,7 @@ class CacheManager(object):
 
     def get_meal_ids_from_cache(self, calories, number_of_meals):
 
-        random_meal_idxs = random.sample(xrange(1, MAX_CACHED_RESULTS), number_of_meals)
+        random_meal_idxs = random.sample(xrange(1, MAX_RESULTS), number_of_meals)
 
         return self.cache.get_from_list(f'calories_{calories}', random_meal_idxs)
 

@@ -1,4 +1,5 @@
-from app.spoonacular.config import BASE_URL, MAX_RESULTS, API_KEY
+from app.spoonacular.config import BASE_URL, API_KEY
+from app.config import MAX_RESULTS
 import requests
 
 class Spoonacular(object):

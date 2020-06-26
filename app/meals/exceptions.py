@@ -1,0 +1,2 @@
+class InvalidDay(Exception):
+    pass

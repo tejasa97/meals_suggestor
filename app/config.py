@@ -3,8 +3,9 @@ import os
 
 load_dotenv()  # Load all env variables for the app
 
-MEALS_PER_COMBO    = 3
-MAX_RESULTS        = 50
+MEALS_PER_COMBO         = 3
+MAX_RESULTS             = 50
+MAX_CLOSEST_BUCKET_DIFF = 25
 
 class Config(object):
 

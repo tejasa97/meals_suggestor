@@ -1,11 +1,11 @@
 from app.data import data_bp
-from app.spoonacular.api import Spoonacular
-from app.cache.cache_manager import CacheManager
+from app.meals.exceptions import InvalidDay
+from app.meals.meals_manager import MealsManager
+from app.spoonacular.exceptions import InvalidApiKey, ServerError
 from flask import Response, request, abort
 import json
 
-spoonacular_client = Spoonacular()
-cache_manager = CacheManager()
+meals_manager = MealsManager()
 
 @data_bp.route("/")
 def ping():
@@ -20,20 +20,25 @@ def ping():
 def get_meals_suggestion():
         
     response = {}
-    data = json.loads(request.data)
+    data     = json.loads(request.data)
 
     calories = data.get('calories', None)
+    day      = data.get('day', None)
 
     if calories is None:
         abort(400, 'Calories data not provided')
 
-    if cache_manager.check_meals_available(calories=calories) is False:
+    try:
+        meals_suggestion = meals_manager.get_meals_suggestion(calories, day)
         
-        meals_data = spoonacular_client.get_recipies_by_nutrients(calories)
-        cache_manager.add_meals_to_cache(calories, meals_data)
-    
-    meals = cache_manager.get_meals_from_cache(calories)
+    except InvalidDay:
+        abort(400, 'Invalid day provided')
+    except InvalidApiKey:
+        abort(400, 'Invalid Spoonacular API-KEY provided')
+    except Exception as e:
+        print("Exception occured")
+        abort(500, str(e))
 
-    return Response(json.dumps(meals), 
+    return Response(json.dumps(meals_suggestion), 
         status=200, mimetype='application/json'
         )

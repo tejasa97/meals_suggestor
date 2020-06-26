@@ -1,4 +1,5 @@
 from app.spoonacular.config import BASE_URL, API_KEY
+from app.spoonacular.exceptions import InvalidApiKey, ServerError
 from app.config import MAX_RESULTS
 import requests
 
@@ -26,9 +27,8 @@ class Spoonacular(object):
 
         if req.status_code != 200:
             if req.status_code == 401:
-                raise Exception("Invalid API key provided!")
-
+                raise InvalidApiKey
             else:
-                raise Exception("Failed to obtain the data")
+                raise ServerError
 
         return req.json()

@@ -1,4 +1,5 @@
 from app.cache.redis_cache import Redis
+from app.cache.exceptions import InvalidMealId
 from app.config import MEALS_PER_COMBO, MAX_RESULTS
 from six.moves import range as xrange
 import random
@@ -38,7 +39,10 @@ class CacheManager(object):
 
     def get_meals_from_ids_cache(self, meal_ids=[]):
 
-        return self.cache.get_multiple_keys(meal_ids)
+        try:
+            return self.cache.get_multiple_keys(meal_ids)
+        except:
+            raise InvalidMealId
 
     def check_meals_available(self, calories):
     

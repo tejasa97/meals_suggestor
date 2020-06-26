@@ -1,22 +1,23 @@
 from app.cache.cache_manager import CacheManager
-from app.config import MAX_CLOSEST_BUCKET_DIFF
-from app.meals.exceptions import InvalidDay
-from app.meals.util import DAYS_OF_WEEK
-from app.spoonacular.api import Spoonacular
+from app.config import MAX_CLOSEST_BUCKET_DIFF, MEALS_PER_COMBO
+from app.cache.exceptions import InvalidMealId
+from app.meals.exceptions import InvalidDay, InvalidMealCombo
+from app.meals.util import check_valid_day
+from app.spoonacular.api import SpoonacularClient
 
 class MealsManager(object):
     
     def __init__(self):
 
         self.cache_manager  = CacheManager()
-        self.meals_provider = Spoonacular()
+        self.meals_provider = SpoonacularClient()
 
     def get_meals_suggestion(self, total_calories, day=None):
 
-        if day is not None and day not in DAYS_OF_WEEK:
-            raise InvalidDay(f"Invalid day '{day}' provided")
+        if day and (check_valid_day(day) is False):
+            raise InvalidDay
 
-        calories_per_meal = total_calories // 3  #Distribute the calories equally
+        calories_per_meal = total_calories // MEALS_PER_COMBO  #Distribute the calories equally
         nearest_bucket    = int(MAX_CLOSEST_BUCKET_DIFF * round(calories_per_meal/MAX_CLOSEST_BUCKET_DIFF)) # Find calorie bucket to MAX_CLOSEST_BUCKET_DIFF
 
         calories = nearest_bucket if nearest_bucket < calories_per_meal else nearest_bucket - MAX_CLOSEST_BUCKET_DIFF #Normalize
@@ -32,9 +33,22 @@ class MealsManager(object):
 
         return meals_suggestion
 
-    def confirm_meal_suggestion(self, day, meal_ids):
+    def get_meals_from_ids(self, meal_ids=[]):
 
-        raise NotImplementedError
+        return self.cache_manager.get_meals_from_ids_cache(meal_ids)
+
+    def confirm_meal_suggestion(self, day, calories, meal_ids):
+
+        meals = self.get_meals_from_ids(meal_ids)
+
+        combo_calories = 0
+        for meal in meals:
+            combo_calories += meal['calories']
+        if combo_calories > calories:
+            raise InvalidMealCombo
+
+        #TODO: Add meal combo to DB
+        return True
 
     def get_weekly_meal_plan(self):
             

@@ -3,7 +3,7 @@ from app.spoonacular.exceptions import InvalidApiKey, ServerError
 from app.config import MAX_RESULTS
 import requests
 
-class Spoonacular(object):
+class SpoonacularClient(object):
 
     def __init__(self):
     

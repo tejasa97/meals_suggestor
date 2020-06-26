@@ -7,3 +7,9 @@ DAYS_OF_WEEK = {
     'Friday'    : 5,
     'Saturday'  : 6,
 }
+
+
+def check_valid_day(day):
+
+    if day not in DAYS_OF_WEEK:
+        return False

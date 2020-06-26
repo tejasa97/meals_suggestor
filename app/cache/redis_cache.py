@@ -1,4 +1,5 @@
 from app.config import REDIS_CONF
+from app.cache.exceptions import RedisKeyError
 import pickle
 import redis
 
@@ -65,7 +66,7 @@ class Redis(object):
             redis_value = self.redis.get(key)
 
             if redis_value is None:
-                raise Exception("Invalid meal_id")
+                raise RedisKeyError
 
             obj = pickle.loads(redis_value)
             obj.update({'meal_id' : int(key)})

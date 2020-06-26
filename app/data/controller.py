@@ -1,5 +1,6 @@
 from app.data import data_bp
-from app.meals.exceptions import InvalidDay
+from app.cache.exceptions import InvalidMealId
+from app.meals.exceptions import InvalidDay, InvalidMealCombo
 from app.meals.meals_manager import MealsManager
 from app.spoonacular.exceptions import InvalidApiKey, ServerError
 from flask import Response, request, abort
@@ -19,7 +20,6 @@ def ping():
 @data_bp.route("/get_meals_suggestion", methods=['POST'])
 def get_meals_suggestion():
         
-    response = {}
     data     = json.loads(request.data)
 
     calories = data.get('calories', None)
@@ -40,5 +40,28 @@ def get_meals_suggestion():
         abort(500, str(e))
 
     return Response(json.dumps(meals_suggestion), 
+        status=200, mimetype='application/json'
+        )
+
+@data_bp.route("/meals/confirm_suggestion", methods=['POST'])
+def confirm_meals_suggestion():
+        
+    response = {}
+    data     = json.loads(request.data)
+
+    calories = data.get('calories', None)
+    day      = data.get('day', None)
+    meal_ids = data.get('meal_ids', None)
+
+    try:
+        success = meals_manager.confirm_meal_suggestion(day, calories, meal_ids)
+    except InvalidMealCombo:
+        abort(400, 'Invalid Meal Combo provided')
+    except InvalidMealId:
+        abort(400, 'Incorrect Meal IDs provided')
+
+    response = {'status' : 'success'}
+
+    return Response(json.dumps(response), 
         status=200, mimetype='application/json'
         )

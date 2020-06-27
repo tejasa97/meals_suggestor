@@ -17,19 +17,17 @@ def ping():
         status=200, mimetype='application/json'
     )
 
-@data_bp.route("/get_meals_suggestion", methods=['POST'])
+@data_bp.route("/get_meals_suggestion", methods=['GET'])
 def get_meals_suggestion():
         
-    data     = json.loads(request.data)
-
-    calories = data.get('calories', None)
-    day      = data.get('day', None)
+    calories = request.args.get('calories', None)
+    day      = request.args.get('day', None)
 
     if calories is None:
         abort(400, 'Calories data not provided')
 
     try:
-        meals_suggestion = meals_manager.get_meals_suggestion(calories, day)
+        meals_suggestion = meals_manager.get_meals_suggestion(int(calories), day)
         
     except InvalidDay:
         abort(400, 'Invalid day provided')
@@ -54,14 +52,24 @@ def confirm_meals_suggestion():
     meal_ids = data.get('meal_ids', None)
 
     try:
-        success = meals_manager.confirm_meal_suggestion(day, calories, meal_ids)
+        combo_data = meals_manager.confirm_meal_suggestion(1, day, calories, meal_ids)
     except InvalidMealCombo:
         abort(400, 'Invalid Meal Combo provided')
     except InvalidMealId:
-        abort(400, 'Incorrect Meal IDs provided')
+        abort(400, 'Invalid Meal ID(s) provided')
 
     response = {'status' : 'success'}
 
-    return Response(json.dumps(response), 
+    return Response(json.dumps(combo_data), 
+        status=201, mimetype='application/json'
+        )
+
+@data_bp.route("/meals/weekly_plan", methods=['GET'])
+def get_weekly_plan():
+        
+    weekly_plan = meals_manager.get_weekly_meal_plan(user_id=1)
+
+    return Response(json.dumps(weekly_plan), 
         status=200, mimetype='application/json'
         )
+    

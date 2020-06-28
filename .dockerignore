@@ -1,0 +1,9 @@
+.git
+.gitignore
+.env
+.vscode
+.dockerignore
+dump.rdb
+docker-compose.yml
+Dockerfile
+nginx

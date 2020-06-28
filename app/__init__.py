@@ -1,5 +1,4 @@
 from app.config import Config
-from dotenv import load_dotenv
 from app.extensions import db, migrate
 from flask import Flask, jsonify, make_response
 
@@ -25,7 +24,6 @@ def register_errorhandlers(app):
 
 def create_app(config_class=Config):
     
-    load_dotenv() # Load all env variables for the app
     app = Flask(__name__)
 
     app.secret_key = "lsgab7sfgd"
@@ -40,12 +38,14 @@ def create_app(config_class=Config):
         db.create_all()
     """
     # Uncomment whenever migration is to be done
-    """ 
+    # """ 
     migrate.init_app(app, db) 
-    """
+    # """
     
     from app.data import data_bp
     app.register_blueprint(data_bp, cli_group=None)
+    from app.auth import auth_bp
+    app.register_blueprint(auth_bp, cli_group=None)
 
     register_errorhandlers(app)
 

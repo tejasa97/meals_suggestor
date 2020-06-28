@@ -17,7 +17,7 @@ def ping():
         status=200, mimetype='application/json'
     )
 
-@data_bp.route("/get_meals_suggestion", methods=['GET'])
+@data_bp.route("/meals/suggestion", methods=['GET'])
 def get_meals_suggestion():
         
     calories = request.args.get('calories', None)

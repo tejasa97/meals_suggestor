@@ -2,7 +2,9 @@ version: '3.4'
 
 volumes:
     postgres_db:
+        name: 'postgres_db'
     redis_db:
+        name: 'redis_dump'
 
 services:
     api_server:

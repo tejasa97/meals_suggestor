@@ -300,9 +300,10 @@ Meals Suggestor provides for 3 APIs, the instructions on using them are indicate
     ```
 
     ##### Note: 
-    To add the meal plans afresh or delete all current data, you will need to delete the Postgres and Redis volumes that were created.
+      To add the meal plans afresh or delete all existing data(Postgres/Redis), you will need to stop and kill the running containers and then remove the Postgres and Redis v    volumes that were created.
     ```sh
-    $ docker volume prune
+    $ docker rm -f $(docker ps -a -q)
+    $ docker volume remove postgres_db redis_dump
     ```
 
    [Python]: <https://www.python.org/>
